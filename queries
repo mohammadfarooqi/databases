@@ -1,0 +1,50 @@
+queries
+
+show databases
+show tables
+
+
+From the interactive prompt, CREATE and USE a new database
+-create database hrr22;
+-use hrr22;
+
+
+
+Create a new table with at least 3 columns, one of them set as a primary key
+-
+create table students (
+  id int not null primary key auto_increment,
+  name char(25),
+  email char(25),
+  age int(3)
+);
+
+
+
+Use the DESCRIBE <table-name> command to verify the setup of your new table
+
+
+
+
+INSERT some new rows into your new table
+-
+insert into students (name, email, age) values ('john', 'john@google.com', 25);
+insert into students (name, email, age) values ('sally', 'sally@yahoo.com', 30);
+insert into students (name, email, age) values ('robin', 'robin@google.com', 20);
+insert into students (name, email, age) values ('joshua', 'joshua@google.com', 18);
+insert into students (name, email, age) values ('nathan', 'nathan@stockbroker.com', 33);
+insert into students (name, email, age) values ('andrew', 'andrew@stockbroker.com', 35);
+insert into students (name, email, age) values ('grace', 'grace@td.com', 40);
+insert into students (name, email, age) values ('emily', 'emily@cibc.com', 26);
+
+
+Execute several queries
+
+
+
+Use UPDATE key word in at least 2 different ways
+-
+update students set name = 'mohammad',email='mohammad@google.com' where name ='robin';
+update students set name = 'jason', email='jason@hotmail.com', age='25' where id='7';
+
+Exit the interactive prompt
