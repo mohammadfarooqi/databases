@@ -1,53 +1,76 @@
-var mysql = require('mysql');
-var Promise = require('bluebird');
+var Sequelize = require('sequelize');
+var db = new Sequelize('chat', 'admin', '');
 
-// Create a database connection and export it from this file.
-// You will need to connect with the user "root", no password,
-// and to the database "chat".
+/* first define the data structure by giving property names and datatypes
+ * See http://sequelizejs.com for other datatypes you can use besides STRING. */
 
-var connect = function () {
-  console.log('in connect');
-  return new Promise(function (resolve, reject) {
-    var connection = mysql.createConnection({
-      user: 'admin',
-      password: '',
-      database: 'chat'
-    });
+var Users = db.define('users', {
+  userId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  username: Sequelize.TEXT('medium')
+});
 
-    connection.connect();
+var Rooms = db.define('rooms', {
+  roomId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  roomname: Sequelize.TEXT('medium')
+});
 
-    resolve(connection);
-  });
-};
+var Messages = db.define('messages', {
+  objectId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  text: Sequelize.TEXT('medium'),
+  // foreign key = roomId
+  roomId: {
+    type: Sequelize.INTEGER,
+    // references: {
+    //   model: 'rooms',
+    //   key: 'roomId'
+    // }
+  },
+  // foreign key = userId
+  userId: {
+    type: Sequelize.INTEGER,
+    // references: {
+    //   model: 'users',
+    //   key: 'userId'
+    // }
+  }
+});
 
-var query = function (connection, query) {
-  return new Promise(function (resolve, reject) {
-    connection.query(query, function (error, results, fields) {
-      if (error) {
-        reject(error);
-      }
 
-      var res = {
-        'connection': connection,
-        'results': results
-      };
+// Messages.hasMany(Users, );
+// Messages.hasMany(Rooms, );
 
-      resolve(res);
-    });
-  });
-};
-
-var disconnect = function (connection) {
-  console.log('disconnected');
-  return new Promise(function (resolve, reject) {
-    connection.end();
-
-    resolve();
-  });
-};
+// Users.belongsTo(Messages);
+// Rooms.belongsTo(Messages);
+//Users.sync().then(()=>Messages.sync()).then(()=>
+Users.sync()
+.then(function() {
+  return Rooms.sync();
+})
+.then(function() {
+  return Messages.sync();
+})
+.then(function() {
+  Users.hasMany(Messages, {foreignKey: 'userId'});
+  Rooms.hasMany(Messages, {foreignKey: 'roomId'});
+  Messages.belongsTo(Users, {foreignKey: 'userId'});
+  Messages.belongsTo(Rooms, {foreignKey: 'roomId'});
+});
 
 module.exports = {
-  connect: connect,
-  query: query,
-  disconnect: disconnect
+  connection: db.sync(/*{force: true}*/),
+  users: Users,
+  rooms: Rooms,
+  messages: Messages
 };

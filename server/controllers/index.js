@@ -1,16 +1,13 @@
 var models = require('../models');
-var app = require('../app');
 
 module.exports = {
   messages: {
     get: function (req, res) {
-      //once received call models and pass inquery
-      models.messages.get(function(results) {
-        res.status(200).json(results).end();
+      models.messages.get(function (result) {
+        res.status(200).json(result).end();
       });
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-      //console.log('body', req.body);
       models.messages.post(req.body, function() {
         res.status(201).end();
       });
@@ -18,14 +15,12 @@ module.exports = {
   },
 
   users: {
-    // Ditto as above
     get: function (req, res) {
-      models.users.get(function(results) {
-        res.status(200).json(results).end();
+      models.users.get(function (users) {
+        res.status(200).json(users).end();
       });
     },
     post: function (req, res) {
-      //assuming user posts a json with prop 'username'
       models.users.post(req.body, function() {
         res.status(201).end();
       });
